@@ -16,6 +16,10 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
+    @ManyToOne
+    @JoinColumn(name = "store_admin_id")
+    private StoreAdmin storeAdmin;
+
     public Long getId() {
         return id;
     }
@@ -46,5 +50,13 @@ public class Store {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public StoreAdmin getStoreAdmin() {
+        return storeAdmin;
+    }
+
+    public void setStoreAdmin(StoreAdmin storeAdmin) {
+        this.storeAdmin = storeAdmin;
     }
 }
