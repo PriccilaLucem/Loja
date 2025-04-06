@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.env
 
 ### STS ###
 .apt_generated
@@ -28,6 +29,7 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+hs_err_pid7088.log
+hs_err_pid7088.jfr
 ### VS Code ###
 .vscode/
