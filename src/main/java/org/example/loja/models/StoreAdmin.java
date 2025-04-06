@@ -3,6 +3,7 @@ package org.example.loja.models;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 @Entity
@@ -18,6 +19,18 @@ public class StoreAdmin {
     private String email;
 
     private String password;
+
+    @OneToMany(mappedBy = "storeAdmin", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<AdminLogs> adminLogs;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "admin_roles",
+            joinColumns = @JoinColumn(name = "admin_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
 
     @OneToMany(mappedBy = "storeAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Store> managedStores = new HashSet<>();

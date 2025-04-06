@@ -22,6 +22,17 @@ public class Costumer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CreditCard> creditCards;
 
+    @OneToMany(mappedBy = "costumer", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<CostumerLogs> logs;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )    private List<Role>  roles;
+
+    //getters and setters
     public UUID getId() {
         return id;
     }
