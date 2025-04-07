@@ -36,6 +36,8 @@ public class Authorization {
     }
 
     public static boolean isAuthorized(String password, String hash) {
+
+
         return BCrypt.verifyer().verify(password.toCharArray(), hash).verified;
     }
 

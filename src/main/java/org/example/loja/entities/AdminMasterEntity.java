@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "admin_masters")
@@ -17,8 +17,9 @@ public class AdminMasterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    private String name;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "adminMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+    Set<RoleEntity> role = new HashSet<>();
 }

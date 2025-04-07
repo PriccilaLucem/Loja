@@ -25,6 +25,10 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "role")
     private List<CostumerEntity> costumer = new ArrayList<>();
 
+    @ManyToOne()
+    @JoinColumn(name = "admin_master_id")
+    private AdminMasterEntity adminMaster;
+
     @ManyToMany(mappedBy = "role")
     private List<StoreAdminEntity> storeAdmin = new ArrayList<>();
 

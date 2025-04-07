@@ -3,7 +3,7 @@ package org.example.loja.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import jakarta.annotation.PostConstruct;
+import org.example.loja.entities.AdminMasterEntity;
 import org.example.loja.entities.RoleEntity;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.util.Authorization;
@@ -73,5 +73,21 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String generateAdminMasterToken(AdminMasterEntity admin) throws Exception {
+        Algorithm algorithm = Algorithm.RSA256(
+                (RSAPublicKey) Authorization.getPublicKey(publicKeyPath),
+                (RSAPrivateKey) Authorization.getPrivateKey(privateKeyPath)
+        );
+
+        return JWT.create()
+                .withIssuer(issuer)
+                .withClaim("email", admin.getEmail())
+                .withArrayClaim("roles", admin.getRole().stream()
+                        .map(RoleEntity::getName).toArray(String[]::new))
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 4000 * 60 * 60))
+                .sign(algorithm);
     }
 }

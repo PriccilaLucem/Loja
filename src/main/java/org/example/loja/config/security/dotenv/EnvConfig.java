@@ -20,7 +20,5 @@ public class EnvConfig {
         System.setProperty("PUBLIC_KEY", publicKey);
         System.setProperty("PRIVATE_KEY", privateKey);
 
-        System.out.println("PUBLIC_KEY: " + publicKey);
-        System.out.println("PRIVATE_KEY: " + privateKey);
     }
 }
