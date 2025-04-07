@@ -5,6 +5,8 @@ target/
 !**/src/test/**/target/
 .env
 logs
+private_key.pem
+public_key.pem
 ### STS ###
 .apt_generated
 .classpath
