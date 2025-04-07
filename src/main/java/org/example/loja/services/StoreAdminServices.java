@@ -3,6 +3,7 @@ package org.example.loja.services;
 import org.apache.catalina.Store;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.repository.StoreAdminRepository;
+import org.example.loja.util.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,10 @@ public class StoreAdminServices {
     // Simplified and cleaned save logic by extracting validation
     public UUID saveStoreAdmin(StoreAdminEntity storeAdminEntity, double lat, double lon) throws IllegalArgumentException{
         validateStoreAdmin(storeAdminEntity);
+        storeAdminEntity.setActive(false);
+        storeAdminEntity.setPassword(Authorization.hashPassword(storeAdminEntity.getPassword()));
+        storeAdminEntity.setStatus(true);
+
         StoreAdminEntity newAdmin = storeAdminRepository.save(storeAdminEntity);
         adminLogsService.saveLogAction(newAdmin, "Created", "New Store Admin created", lat, lon);
         return newAdmin.getId();
@@ -37,6 +42,10 @@ public class StoreAdminServices {
     public boolean deleteStoreAdmin(UUID uuid) throws IllegalArgumentException{
         int updated = storeAdminRepository.updateStatus(uuid, false);
         return updated > 0;
+    }
+
+    public StoreAdminEntity getStoreAdminByEmail(String email) throws IllegalArgumentException{
+        return storeAdminRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Store Admin not found"));
     }
 
     /**
