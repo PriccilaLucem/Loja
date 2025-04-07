@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.example.loja.config.security.JwtTokenProvider;
 import org.example.loja.dto.loginDTO;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.services.StoreAdminServices;
@@ -21,7 +22,8 @@ public class StoreAdminLoginController {
 
     @Autowired
     private StoreAdminServices storeAdminServices;
-
+    @Autowired
+    private JwtTokenProvider provider;
     @Operation(
             summary = "Autenticar o administrador",
             description = "Permite que um administrador realize login com e-mail e senha, retornando um token JWT se autenticado com sucesso."
@@ -50,8 +52,9 @@ public class StoreAdminLoginController {
     public ResponseEntity<?> login(@RequestBody loginDTO login) {
         try {
             StoreAdminEntity storeAdmin = storeAdminServices.getStoreAdminByEmail(login.getEmail());
+
             if (Authorization.isAuthorized(login.getPassword(), storeAdmin.getPassword())) {
-                String token = Authorization.generateUserAdminToken(storeAdmin);
+                    String token = provider.generateUserAdminToken(storeAdmin);
                 return ResponseEntity.ok().body(Map.of("token", token));
             }
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));

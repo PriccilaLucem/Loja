@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class AdminLogsService {
 
     @Autowired
-    private StoreAdminLogsRepository logsRepository;
+    StoreAdminLogsRepository logsRepository;
 
     public void saveLogAction(StoreAdminEntity admin, String action, String description, double lat, double lon) {
         AdminLogsEntity log = new AdminLogsEntity();
