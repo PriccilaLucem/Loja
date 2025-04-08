@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtTokenProvider {
@@ -89,5 +90,9 @@ public class JwtTokenProvider {
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 4000 * 60 * 60))
                 .sign(algorithm);
+    }
+    public static UUID extractIdFromToken(String token) {
+
+        return UUID.fromString(JWT.decode(token).getClaim("id").asString());
     }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.services.StoreAdminServices;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@Tag(name = "Store Admin Controller", description = "Endpoints for Store Admin management")
 @RequestMapping("/api/v1/store-admins")
 public class StoreAdminController {
 
@@ -28,12 +30,12 @@ public class StoreAdminController {
     private StoreAdminServices storeAdminServices;
 
     @Operation(
-            summary = "Listar todos os administradores da loja",
-            description = "Retorna uma lista de todos os administradores da loja registrados no sistema."
+            summary = "List all store administrators",
+            description = "Returns a list of all store administrators registered in the system."
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Lista de administradores retornada com sucesso",
+            description = "Store administrators list successfully retrieved",
             content = @Content(mediaType = "application/json")
     )
     @GetMapping
@@ -51,25 +53,25 @@ public class StoreAdminController {
     }
 
     @Operation(
-            summary = "Obter administrador da loja por ID",
-            description = "Busca e retorna os dados de um administrador da loja com base no ID fornecido."
+            summary = "Get store administrator by ID",
+            description = "Fetches and returns the information of a store administrator by the provided ID."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Administrador encontrado com sucesso",
+                    description = "Administrator successfully found",
                     content = @Content(mediaType = "application/json")
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Administrador não encontrado",
+                    description = "Administrator not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "{ \"error\": \"Store Admin not found.\" }"))
             )
     })
     @GetMapping("/{id}")
     public ResponseEntity<?> getStoreAdminById(
-            @Parameter(description = "ID do administrador da loja", example = "76b8cc94-bc5f-43d1-a25f-91bb11bdd59f")
+            @Parameter(description = "Store admin ID", example = "76b8cc94-bc5f-43d1-a25f-91bb11bdd59f")
             @PathVariable UUID id) {
         logger.info("GET /store-admins/{} - Getting store admin by ID", id);
         try {
@@ -83,10 +85,10 @@ public class StoreAdminController {
     }
 
     @Operation(
-            summary = "Criar novo administrador da loja",
-            description = "Cria um novo administrador da loja e retorna o ID gerado.",
+            summary = "Create new store administrator",
+            description = "Creates a new store administrator and returns the generated ID.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Dados do administrador da loja incluindo e-mail, senha e nome",
+                    description = "Store administrator data including email, password, and name",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StoreAdminEntity.class))
             )
@@ -94,23 +96,23 @@ public class StoreAdminController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Administrador criado com sucesso",
+                    description = "Administrator successfully created",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "{ \"message\": \"Store Admin created.\", \"id\": \"76b8cc94-bc5f-43d1-a25f-91bb11bdd59f\" }"))
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Erro ao criar administrador",
+                    description = "Error creating administrator",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "{ \"error\": \"Descrição do erro\" }"))
+                            schema = @Schema(example = "{ \"error\": \"Error description\" }"))
             )
     })
     @PostMapping
     public ResponseEntity<?> saveStoreAdmin(
             @RequestBody StoreAdminEntity storeAdminEntity,
-            @Parameter(description = "Latitude de localização associada ao administrador", example = "37.7749")
+            @Parameter(description = "Latitude for the administrator's location", example = "37.7749")
             @RequestParam(required = true) double lat,
-            @Parameter(description = "Longitude de localização associada ao administrador", example = "-122.4194")
+            @Parameter(description = "Longitude for the administrator's location", example = "-122.4194")
             @RequestParam(required = true) double lon) {
         logger.info("POST /store-admins - Creating new store admin: {} at lat={}, lon={}",
                 storeAdminEntity.getEmail(), lat, lon);
@@ -126,24 +128,24 @@ public class StoreAdminController {
     }
 
     @Operation(
-            summary = "Deletar administrador da loja",
-            description = "Deleta logicamente um administrador da loja.",
-            parameters = @Parameter(name = "id", required = true, description = "ID do administrador a ser deletado", example = "76b8cc94-bc5f-43d1-a25f-91bb11bdd59f")
+            summary = "Delete store administrator",
+            description = "Logically deletes a store administrator.",
+            parameters = @Parameter(name = "id", required = true, description = "ID of the administrator to delete", example = "76b8cc94-bc5f-43d1-a25f-91bb11bdd59f")
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
-                    description = "Administrador deletado com sucesso"
+                    description = "Administrator successfully deleted"
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Falha ao deletar (já desativado)",
+                    description = "Deletion failed (already deactivated)",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "{ \"error\": \"Admin Already Deactivated\" }"))
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Administrador não encontrado",
+                    description = "Administrator not found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "{ \"error\": \"Store Admin not found.\" }"))
             )

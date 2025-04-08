@@ -45,6 +45,12 @@
             <artifactId>spring-boot-starter-graphql</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>9.0.2</version>
+        </dependency>
+
         <!-- GraphQL Java -->
         <dependency>
             <groupId>com.graphql-java</groupId>

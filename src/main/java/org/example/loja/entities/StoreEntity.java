@@ -1,11 +1,14 @@
 package org.example.loja.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "stores")
@@ -19,7 +22,28 @@ public class StoreEntity {
     private Long id;
 
     private String name;
-    private String location;
+
+    @ManyToMany
+    @JoinTable(
+            name = "store_location",
+            joinColumns = @JoinColumn(name = "store_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "location_id", referencedColumnName = "id")
+    )
+    @NotNull
+    private Set<AddressEntity> locations;
+
+
+    private String imageURL;
+
+    private String description;
+
+    @NotNull
+    private String phone;
+
+    @NotNull
+    private String email;
+
+    private Boolean active;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductEntity> productEntities;

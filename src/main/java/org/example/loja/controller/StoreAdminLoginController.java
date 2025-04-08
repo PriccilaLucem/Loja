@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.loja.config.security.JwtTokenProvider;
 import org.example.loja.dto.loginDTO;
 import org.example.loja.entities.StoreAdminEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+@Tag(name = "Store Admin Login Controller", description = "Endpoints for Store Admin management")
 @RequestMapping("/api/v1/admin/login")
 public class StoreAdminLoginController {
 
@@ -24,28 +26,29 @@ public class StoreAdminLoginController {
     private StoreAdminServices storeAdminServices;
     @Autowired
     private JwtTokenProvider provider;
+
     @Operation(
-            summary = "Autenticar o administrador",
-            description = "Permite que um administrador realize login com e-mail e senha, retornando um token JWT se autenticado com sucesso."
+            summary = "Authenticate administrator",
+            description = "Allows an administrator to log in using email and password, returning a JWT token if successfully authenticated."
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Login realizado com sucesso",
+                    description = "Login successful",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "{ \"token\": \"jwt_token_aqui\" }"))
+                            schema = @Schema(example = "{ \"token\": \"jwt_token_here\" }"))
             ),
             @ApiResponse(
                     responseCode = "401",
-                    description = "Credenciais inválidas",
+                    description = "Invalid credentials",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "{ \"error\": \"Invalid credentials\" }"))
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Erro no envio da requisição",
+                    description = "Request error",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "{ \"error\": \"Descrição do erro\" }"))
+                            schema = @Schema(example = "{ \"error\": \"Error description\" }"))
             )
     })
     @PostMapping
@@ -54,7 +57,7 @@ public class StoreAdminLoginController {
             StoreAdminEntity storeAdmin = storeAdminServices.getStoreAdminByEmail(login.getEmail());
 
             if (Authorization.isAuthorized(login.getPassword(), storeAdmin.getPassword())) {
-                    String token = provider.generateUserAdminToken(storeAdmin);
+                String token = provider.generateUserAdminToken(storeAdmin);
                 return ResponseEntity.ok().body(Map.of("token", token));
             }
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
