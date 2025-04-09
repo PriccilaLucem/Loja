@@ -78,7 +78,7 @@ public class StoreManagerService {
     }
 
 
-    private void validateStoreManager(StoreManagerEntity storeManager){
+    public void validateStoreManager(StoreManagerEntity storeManager){
         if(storeManager == null){
             throw new IllegalArgumentException("Invalid Store Manager");
         }
