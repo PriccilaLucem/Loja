@@ -36,8 +36,7 @@ public class StoreController {
     public ResponseEntity<?> postStore(@RequestBody StoreEntity store,
                                        @RequestHeader("Authorization") String token) {
         try {
-            String tokenValue = token.startsWith("Bearer ") ? token.substring(7) : token; // Remover o prefixo "Bearer " se existir
-            UUID storeAdminId = JwtTokenProvider.extractIdFromToken(tokenValue);
+            UUID storeAdminId = JwtTokenProvider.extractIdFromToken(token);
 
             long id = storeService.saveStore(store, storeAdminId);
 
@@ -49,7 +48,7 @@ public class StoreController {
         }
     }
 
-    @PutMapping
+    @PutMapping(value = "/{id}")
     @Operation(summary = "Update a Store", description = "Updates the store details")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Store updated successfully", content = @Content(schema = @Schema(implementation = Map.class))),
@@ -59,14 +58,14 @@ public class StoreController {
             @ApiResponse(responseCode = "403", description = "Not Authorized to deactivate store", content = @Content(schema = @Schema(implementation = Map.class)))
     })
     public ResponseEntity<?> putStore(@RequestBody StoreEntity store,
-                                      @RequestHeader("Authorization") String token) {
-        String tokenValue = token.startsWith("Bearer ") ? token.substring(7) : token;
-        UUID storeAdminId = JwtTokenProvider.extractIdFromToken(tokenValue);
-
+                                      @RequestHeader("Authorization") String token,
+                                      @PathVariable long id) {
+        UUID storeAdminId = JwtTokenProvider.extractIdFromToken(token);
+        store.setId(id);
         try {
             if (storeService.verifyIfIsAuthorized(storeAdminId, store.getId())){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "You are not authorized to update this store"));
-            };
+            }
             boolean affectedRows = storeService.updateStore(store);
             if (affectedRows) {
                 return ResponseEntity.accepted().body(Map.of("message", "Store updated"));
@@ -89,12 +88,11 @@ public class StoreController {
     })
     public ResponseEntity<?> deactivateStore(@PathVariable long id,
                                             @RequestHeader("Authorization") String token) {
-        String tokenValue = token.startsWith("Bearer ") ? token.substring(7) : token;
-        UUID storeAdminId = JwtTokenProvider.extractIdFromToken(tokenValue);
+        UUID storeAdminId = JwtTokenProvider.extractIdFromToken(token);
         try {
             if(storeService.verifyIfIsAuthorized(storeAdminId, id)){
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "You are not authorized to deactivate this store"));
-            };
+            }
 
             boolean isDeactivated = storeService.deleteStore(id);
             if (isDeactivated) {

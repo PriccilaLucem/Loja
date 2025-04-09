@@ -51,4 +51,7 @@ public class StoreEntity {
     @ManyToOne
     @JoinColumn(name = "store_admin_id")
     private StoreAdminEntity storeAdmin;
+
+    @OneToOne(mappedBy = "store")
+    private StoreManagerEntity storeManager;
 }

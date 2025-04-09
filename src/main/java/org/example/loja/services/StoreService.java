@@ -16,10 +16,10 @@ import java.util.UUID;
 public class StoreService {
 
     @Autowired
-    private StoreRepository storeRepository;
+    StoreRepository storeRepository;
 
     @Autowired
-    private StoreAdminRepository storeAdminRepository;
+    StoreAdminRepository storeAdminRepository;
 
     public Long saveStore(StoreEntity store, UUID storeAdmin) throws IllegalArgumentException {
         if (storeAdmin == null) {
@@ -58,42 +58,42 @@ public class StoreService {
         }
     }
 
-    private void validateStore(StoreEntity store) throws IllegalArgumentException {
-        if (store == null) {
-            throw new IllegalArgumentException("Store is null");
-        }
+        private void validateStore(StoreEntity store) throws IllegalArgumentException {
 
-        if (store.getDescription() == null || store.getDescription().length() > 250) {
-            throw new IllegalArgumentException("Store Description is null or too long");
-        }
-
-        if (store.getStoreAdmin() == null || store.getStoreAdmin().getId() == null) {
-            throw new IllegalArgumentException("Store Admin or Admin ID is null");
-        }
-
-        if (store.getLocations() == null || store.getLocations().isEmpty()) {
-            throw new IllegalArgumentException("Store Locations are null or empty");
-        }
-
-        if (store.getName() == null) {
-            throw new IllegalArgumentException("Store Name is null");
-        }
-
-        if (store.getEmail() == null ||
-                !store.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-            throw new IllegalArgumentException("Store Email is either null or invalid");
-        }
-
-        try {
-            PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-            Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse(store.getPhone(), "US"); // Define região padrão como "US"
-            if (!phoneUtil.isValidNumber(phoneNumber)) {
-                throw new IllegalArgumentException(store.getPhone() + " is not a valid phone number");
+            if (store.getDescription() == null || store.getDescription().length() > 250) {
+                throw new IllegalArgumentException("Store Description is null or too long");
             }
-        } catch (NumberParseException e) {
-            throw new IllegalArgumentException("Error parsing phone number: " + e.getMessage());
+
+            if (store.getStoreAdmin() == null || store.getStoreAdmin().getId() == null) {
+                throw new IllegalArgumentException("Store Admin or Admin ID is null");
+            }
+
+            if (store.getLocations() == null || store.getLocations().isEmpty()) {
+                throw new IllegalArgumentException("Store Locations are null or empty");
+            }
+
+            if (store.getName() == null) {
+                throw new IllegalArgumentException("Store Name is null");
+            }
+
+            if (store.getEmail() == null ||
+                    !store.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                throw new IllegalArgumentException("Store Email is either null or invalid");
+            }
+            if (store.getPhone() == null) {
+                throw new IllegalArgumentException("Store Phone is null");
+            }
+            try {
+                PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber phoneNumber = phoneUtil.parse(store.getPhone(), "US"); // Define região padrão como "US"
+                if (!phoneUtil.isValidNumber(phoneNumber)) {
+                    throw new IllegalArgumentException(store.getPhone() + " is not a valid phone number");
+                }
+            } catch (NumberParseException e) {
+                throw new IllegalArgumentException("Error parsing phone number: " + e.getMessage());
+            }
         }
-    }
+
 
     public boolean verifyIfIsAuthorized(UUID uuid, Long id) throws IllegalArgumentException {
         if (uuid == null || id == null) {

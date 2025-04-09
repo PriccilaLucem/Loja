@@ -3,6 +3,8 @@ package org.example.loja.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.loja.entities.AdminMasterEntity;
 import org.example.loja.entities.RoleEntity;
 import org.example.loja.entities.StoreAdminEntity;
@@ -15,8 +17,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,6 +47,19 @@ public class JwtTokenProvider {
     @Value("${PRIVATE_KEY}")
     private String privateKeyPath;
 
+
+    public RSAPublicKey getPublicKey() throws Exception {
+        String key = new String(Files.readAllBytes(Paths.get(publicKeyPath)))
+                .replaceAll("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll("-----END PUBLIC KEY-----", "")
+                .replaceAll("\\s+", "");
+
+        byte[] keyBytes = Base64.getDecoder().decode(key);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+
+        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+    }
 
     public String generateUserAdminToken(StoreAdminEntity admin) throws Exception {
         Algorithm algorithm = Algorithm.RSA256(
@@ -91,8 +112,18 @@ public class JwtTokenProvider {
                 .withExpiresAt(new Date(System.currentTimeMillis() + 4000 * 60 * 60))
                 .sign(algorithm);
     }
-    public static UUID extractIdFromToken(String token) {
+    public static UUID extractIdFromToken(String tokenValue) {
+        String token = tokenValue.startsWith("Bearer ") ? tokenValue.substring(7) : tokenValue;
+        if (token.isBlank() || !token.contains(".")) {
+            throw new IllegalArgumentException("Invalid or missing JWT token");
+        }
 
-        return UUID.fromString(JWT.decode(token).getClaim("id").asString());
+        try {
+            DecodedJWT decodedJWT = JWT.decode(token);
+            String userId = decodedJWT.getClaim("id").asString();
+            return UUID.fromString(userId);
+        } catch (JWTDecodeException e) {
+            throw new IllegalArgumentException("Failed to decode JWT token", e);
+        }
     }
 }

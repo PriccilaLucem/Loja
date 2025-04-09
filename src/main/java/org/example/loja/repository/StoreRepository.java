@@ -24,4 +24,5 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
             "WHERE s.id = :#{#storeEntity.id}")
     @Transactional
     int saveStoreAndReturnAffectedRows(@NonNull @Param("storeEntity") StoreEntity storeEntity);
+
 }
