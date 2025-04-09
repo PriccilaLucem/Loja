@@ -3,6 +3,8 @@ package org.example.loja.config.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.loja.entities.AdminMasterEntity;
 import org.example.loja.entities.RoleEntity;
 import org.example.loja.entities.StoreAdminEntity;
@@ -92,7 +94,16 @@ public class JwtTokenProvider {
                 .sign(algorithm);
     }
     public static UUID extractIdFromToken(String token) {
+        if (token == null || token.isBlank() || !token.contains(".")) {
+            throw new IllegalArgumentException("Invalid or missing JWT token");
+        }
 
-        return UUID.fromString(JWT.decode(token).getClaim("id").asString());
+        try {
+            DecodedJWT decodedJWT = JWT.decode(token);
+            String userId = decodedJWT.getClaim("id").asString();
+            return UUID.fromString(userId);
+        } catch (JWTDecodeException e) {
+            throw new IllegalArgumentException("Failed to decode JWT token", e);
+        }
     }
 }

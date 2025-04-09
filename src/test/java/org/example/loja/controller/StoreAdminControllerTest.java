@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +44,7 @@ class StoreAdminControllerTest {
         ResponseEntity<List<StoreAdminEntity>> response = storeAdminController.getAllStoreAdmins();
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(2, response.getBody().size());
         verify(storeAdminServices, times(1)).getAllStoreAdmins();
     }
@@ -57,7 +56,7 @@ class StoreAdminControllerTest {
         ResponseEntity<List<StoreAdminEntity>> response = storeAdminController.getAllStoreAdmins();
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertTrue(response.getBody().isEmpty());
     }
 
