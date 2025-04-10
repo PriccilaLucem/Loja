@@ -1,10 +1,13 @@
 package org.example.loja.inteface;
 
+import org.example.loja.entities.RoleEntity;
+
 import java.util.List;
+import java.util.UUID;
 
 public interface LoggableUser {
-    Long getId();
+    UUID getId();
     String getName();
     String getEmail();
-    List<String> getRole();
+    List<RoleEntity> getRoles();
 }

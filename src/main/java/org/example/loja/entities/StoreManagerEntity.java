@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.example.loja.inteface.LoggableUser;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -48,4 +49,21 @@ public class StoreManagerEntity implements LoggableUser {
 
     @OneToOne(cascade = CascadeType.PERSIST)
     private StoreEntity store;
+
+    @Override
+    public UUID getId() {
+        return this.id;
+    }
+    @Override
+    public String getName() {
+        return this.name;
+    }
+    @Override
+    public String getEmail() {
+        return this.email;
+    }
+    @Override
+    public List<RoleEntity> getRoles(){
+        return this.getRole().stream().toList();
+    }
 }

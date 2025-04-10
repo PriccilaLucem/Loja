@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductsServices {
@@ -32,6 +30,10 @@ public class ProductsServices {
         return affectedRows > 0;
     }
 
+    public ProductEntity getProductById(Long id){
+        return productsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Product"));
+    }
+
     public int updateProductQuantity(Long productId, int quantityChange) {
         ProductEntity product = productsRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid Product"));
         int newQuantity = product.getQuantity() + quantityChange;
@@ -44,7 +46,9 @@ public class ProductsServices {
 
         return product.getQuantity();
     }
-
+    public List<ProductEntity> getProductsByCategories(String category){
+        return productsRepository.findAllByCategories_Name(category);
+    }
     public long createProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
         product.setName(productDTO.getName());

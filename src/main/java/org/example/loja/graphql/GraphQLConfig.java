@@ -91,8 +91,8 @@ public class GraphQLConfig {
                         .description("Find products by category name")
                         .argument(arg -> arg.name("categoryName").type(Scalars.GraphQLString))
                         .type(new GraphQLList(productType))
-                        .dataFetcher(environment -> productsServices.getProductsByCategory(
-                                environment.getArgument("categoryName")))) // Produtos por categoria
+                        .dataFetcher(environment -> productsServices.getProductsByCategories(
+                                environment.getArgument("categoryName"))))
                 .build();
 
         GraphQLSchema graphQLSchema = GraphQLSchema.newSchema()

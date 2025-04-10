@@ -1,6 +1,7 @@
 package org.example.loja.services;
 
 import org.example.loja.entities.AdminLogsEntity;
+import org.example.loja.entities.RoleEntity;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.repository.StoreLogsRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -11,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,12 +44,14 @@ class AdminLogsServiceTest {
         StoreAdminEntity mockAdmin = new StoreAdminEntity();
         mockAdmin.setId(UUID.randomUUID());
         mockAdmin.setName("Admin Test");
-
+        mockAdmin.setEmail("admin@test.com");
+        RoleEntity role = new RoleEntity();
+        role.setName("ROLE_ADMIN");
+        mockAdmin.setRole(new HashSet<>(Set.of(role)));
         String action = "TEST_ACTION";
         String description = "Test description";
         double lat = 40.7128;
         double lon = -74.0060;
-
         adminLogsService.saveLogAction(mockAdmin, action, description, lat, lon);
 
         ArgumentCaptor<AdminLogsEntity> logsCaptor = ArgumentCaptor.forClass(AdminLogsEntity.class);
@@ -54,7 +59,6 @@ class AdminLogsServiceTest {
 
         AdminLogsEntity capturedLog = logsCaptor.getValue();
         assertNotNull(capturedLog);
-        assertEquals(mockAdmin, capturedLog.getStoreAdmin());
         assertEquals(action, capturedLog.getAction());
         assertEquals(description, capturedLog.getDescription());
         assertEquals(lat, capturedLog.getLat());

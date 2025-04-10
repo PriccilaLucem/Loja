@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,4 +55,7 @@ public class StoreEntity {
 
     @OneToOne(mappedBy = "store")
     private StoreManagerEntity storeManager;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EmployeeEntity> employee = new HashSet<>();
 }

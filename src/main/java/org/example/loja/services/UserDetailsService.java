@@ -5,6 +5,7 @@ import org.example.loja.repository.AdminMasterRepository;
 import org.example.loja.repository.StoreAdminRepository;
 import org.example.loja.repository.StoreManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +22,7 @@ public class UserDetailsService implements org.springframework.security.core.use
     @Autowired
     private StoreManagerRepository storeManagerRepository;
 
+    @Lazy
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 

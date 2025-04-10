@@ -43,4 +43,24 @@ public class StoreAdminEntity implements LoggableUser {
 
     @OneToMany(mappedBy = "storeAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StoreEntity> managedStore = new HashSet<>();
+
+    @Override
+    public UUID getId() {
+        return this.id;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public String getEmail() {
+        return this.email;
+    }
+
+    @Override
+    public List<RoleEntity> getRoles(){
+        return this.getRole().stream().toList();
+    }
 }

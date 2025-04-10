@@ -7,7 +7,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -43,6 +45,8 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "role")
     private List<StoreManagerEntity> storeManager = new ArrayList<>();
 
+    @OneToMany( fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = EmployeeEntity.class)
+    private Set<EmployeeEntity> employee = new HashSet<>();
 
     @PreUpdate
     protected void onUpdate() {

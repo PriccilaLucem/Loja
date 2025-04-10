@@ -16,7 +16,7 @@ public class AdminLogsService {
 
     public void saveLogAction(LoggableUser user, String action, String description, double lat, double lon) {
         AdminLogsEntity log = new AdminLogsEntity();
-        log.setUserType(user.getRole().getFirst());
+        log.setUserType(user.getRoles().get(0).getName());
         log.setAction(action);
         log.setDescription(description);
         log.setTimestamp(LocalDateTime.now());
