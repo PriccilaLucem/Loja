@@ -24,15 +24,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
+
             if (jwtTokenProvider.validateToken(token)) {
-                var authentication = jwtTokenProvider.getAuthentication(token);
+                // Extract username (email) from token first
+                String username = jwtTokenProvider.getUsernameFromToken(token);
+
+                // Then get authentication using the extracted username
+                var authentication = jwtTokenProvider.getAuthentication(username);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Invalid or expired token");
+                return;
             }
+        } else {
+            logger.warn("Authorization header is missing or malformed");
         }
 
         filterChain.doFilter(request, response);

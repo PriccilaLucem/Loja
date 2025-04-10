@@ -20,6 +20,6 @@ public class AdminMasterEntity {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "adminMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "adminMaster", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     Set<RoleEntity> role = new HashSet<>();
 }
