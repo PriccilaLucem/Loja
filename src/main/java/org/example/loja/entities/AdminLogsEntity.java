@@ -13,27 +13,18 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class AdminLogsEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String description;
+    private Long userId;
+    private String userName;
+    private String userType;
 
-    @Column(nullable = false)
     private String action;
-
-    @Column(nullable = false)
+    private String description;
     private LocalDateTime timestamp;
-
-    @Column(nullable = false)
-    private Double lat;
-
-    @Column(nullable = false)
-    private Double lon;
-
-    @ManyToOne
-    @JoinColumn(name = "store_admin_id")
-    private StoreAdminEntity storeAdmin;
+    private double lat;
+    private double lon;
 }
-

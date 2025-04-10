@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.example.loja.entities.AdminMasterEntity;
 import org.example.loja.entities.RoleEntity;
 import org.example.loja.entities.StoreAdminEntity;
+import org.example.loja.entities.StoreManagerEntity;
 import org.example.loja.util.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -68,6 +70,10 @@ public class JwtTokenProvider {
             throw e;
         }
     }
+    public List<String> getRolesFromToken(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return List.of(jwt.getClaim("roles").asArray(String.class));
+    }
 
     public String generateUserAdminToken(StoreAdminEntity admin) throws Exception {
         logger.debug("Generating JWT for StoreAdminEntity with ID: {}", admin.getId());
@@ -98,6 +104,10 @@ public class JwtTokenProvider {
     public String getUsernameFromToken(String token) {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getClaim("email").asString();
+    }
+    public String getRoleFromToken(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getClaim("roles").asArray(String.class)[0];
     }
 
     public Authentication getAuthentication(String username) {
@@ -138,13 +148,68 @@ public class JwtTokenProvider {
                     .withArrayClaim("roles", admin.getRole().stream()
                             .map(RoleEntity::getName).toArray(String[]::new))
                     .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 4000 * 60 * 60)) // 4 horas
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
                     .sign(algorithm);
 
             logger.debug("JWT generated successfully for AdminMasterEntity.");
             return token;
         } catch (Exception e) {
             logger.error("Error generating JWT for AdminMasterEntity", e);
+            throw e;
+        }
+    }
+
+    public String generateStoreAdminToken(StoreAdminEntity admin) throws Exception {
+        logger.debug("Generating JWT for StoreAdminEntity with ID: {}", admin.getId());
+        try {
+            Algorithm algorithm = Algorithm.RSA256(
+                    (RSAPublicKey) Authorization.getPublicKey(publicKeyPath),
+                    (RSAPrivateKey) Authorization.getPrivateKey(privateKeyPath)
+            );
+            String token = JWT.create()
+                    .withIssuer(issuer)
+                    .withClaim("email", admin.getEmail())
+                    .withArrayClaim("roles", admin.getRole().stream()
+                            .map(RoleEntity::getName).toArray(String[]::new))
+                    .withClaim("name", admin.getName())
+                    .withClaim("id", admin.getId().toString())
+                    .withIssuedAt(new Date())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
+                    .sign(algorithm);
+
+            logger.debug("Jwt generated successfully for StoreAdminEntity.");
+
+            return token;
+        }catch (Exception e) {
+            logger.error("Error generating JWT for StoreAdminEntity", e);
+            throw e;
+        }
+
+    }
+
+    public String generateStoreManagerToken(StoreManagerEntity manager) throws Exception {
+        logger.debug("Generating JWT for StoreAdminEntity with ID: {}", manager.getId());
+        try {
+            Algorithm algorithm = Algorithm.RSA256(
+                    (RSAPublicKey) Authorization.getPublicKey(publicKeyPath),
+                    (RSAPrivateKey) Authorization.getPrivateKey(privateKeyPath)
+            );
+            String token = JWT.create()
+                    .withIssuer(issuer)
+                    .withClaim("email", manager.getEmail())
+                    .withArrayClaim("roles", manager.getRole().stream()
+                            .map(RoleEntity::getName).toArray(String[]::new))
+                    .withClaim("name", manager.getName())
+                    .withClaim("id", manager.getId().toString())
+                    .withIssuedAt(new Date())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
+                    .sign(algorithm);
+
+            logger.debug("Jwt generated successfully for StoreAdminEntity.");
+
+            return token;
+        }catch (Exception e) {
+            logger.error("Error generating JWT for StoreAdminEntity", e);
             throw e;
         }
     }

@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,10 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
 
             if (jwtTokenProvider.validateToken(token)) {
-                // Extract username (email) from token first
                 String username = jwtTokenProvider.getUsernameFromToken(token);
-
-                // Then get authentication using the extracted username
+                List<String> roles = jwtTokenProvider.getRolesFromToken(token);
                 var authentication = jwtTokenProvider.getAuthentication(username);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {

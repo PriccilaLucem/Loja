@@ -2,7 +2,7 @@ package org.example.loja.controller;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.example.loja.config.security.JwtTokenProvider;
-import org.example.loja.dto.loginDTO;
+import org.example.loja.dto.LoginDTO;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.services.StoreAdminServices;
 import org.example.loja.util.Authorization;
@@ -50,7 +50,7 @@ class    StoreAdminLoginControllerTest {
     }
     @Test
     void testLogin_Success() throws Exception {
-        loginDTO login = new loginDTO();
+        LoginDTO login = new LoginDTO();
         login.setEmail("admin@test.com");
         login.setPassword("correct_password");
 
@@ -85,7 +85,7 @@ class    StoreAdminLoginControllerTest {
     @Test
     void testLogin_InvalidCredentials() {
         // Arrange
-        loginDTO login = new loginDTO();
+        LoginDTO login = new LoginDTO();
         login.setEmail("admin@test.com");
         login.setPassword("wrong_password");
 
@@ -114,7 +114,7 @@ class    StoreAdminLoginControllerTest {
     @Test
     void testLogin_EmailNotFound() {
         // Arrange
-        loginDTO login = new loginDTO();
+        LoginDTO login = new LoginDTO();
         login.setEmail("nonexistent@test.com");
         login.setPassword("password");
 
@@ -135,7 +135,7 @@ class    StoreAdminLoginControllerTest {
 
     @Test
     void testLogin_ExceptionDuringProcessing() {
-        loginDTO login = new loginDTO();
+        LoginDTO login = new LoginDTO();
         login.setEmail("admin@test.com");
         login.setPassword("password");
 

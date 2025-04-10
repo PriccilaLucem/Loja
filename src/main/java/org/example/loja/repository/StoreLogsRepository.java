@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface StoreAdminLogsRepository extends JpaRepository<AdminLogsEntity, Long> {
+public interface StoreLogsRepository extends JpaRepository<AdminLogsEntity, Long> {
 }

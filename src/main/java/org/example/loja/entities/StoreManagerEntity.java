@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.loja.inteface.LoggableUser;
+
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StoreManagerEntity {
+public class StoreManagerEntity implements LoggableUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,6 +37,14 @@ public class StoreManagerEntity {
 
     @NotNull
     private String cpf;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "store_manager_roles",
+        joinColumns = @JoinColumn(name = "store_manager_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleEntity> role = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.PERSIST)
     private StoreEntity store;

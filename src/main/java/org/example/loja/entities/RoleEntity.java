@@ -40,6 +40,10 @@ public class RoleEntity {
 
     private LocalDateTime updatedAt;
 
+    @ManyToMany(mappedBy = "role")
+    private List<StoreManagerEntity> storeManager = new ArrayList<>();
+
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();

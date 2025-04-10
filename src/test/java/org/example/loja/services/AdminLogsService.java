@@ -2,7 +2,7 @@ package org.example.loja.services;
 
 import org.example.loja.entities.AdminLogsEntity;
 import org.example.loja.entities.StoreAdminEntity;
-import org.example.loja.repository.StoreAdminLogsRepository;
+import org.example.loja.repository.StoreLogsRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,19 +21,19 @@ class AdminLogsServiceTest {
     private static AdminLogsService adminLogsService;
 
     @Mock
-    private static StoreAdminLogsRepository storeAdminLogsRepository;
+    private static StoreLogsRepository storeLogsRepository;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
         adminLogsService = new AdminLogsService();
-        adminLogsService.logsRepository = storeAdminLogsRepository;
+        adminLogsService.logsRepository = storeLogsRepository;
     }
 
     @AfterAll
     static void tearDown() {
-        verifyNoMoreInteractions(storeAdminLogsRepository);
+        verifyNoMoreInteractions(storeLogsRepository);
     }
 
     @Test
@@ -50,7 +50,7 @@ class AdminLogsServiceTest {
         adminLogsService.saveLogAction(mockAdmin, action, description, lat, lon);
 
         ArgumentCaptor<AdminLogsEntity> logsCaptor = ArgumentCaptor.forClass(AdminLogsEntity.class);
-        verify(storeAdminLogsRepository, times(1)).save(logsCaptor.capture());
+        verify(storeLogsRepository, times(1)).save(logsCaptor.capture());
 
         AdminLogsEntity capturedLog = logsCaptor.getValue();
         assertNotNull(capturedLog);

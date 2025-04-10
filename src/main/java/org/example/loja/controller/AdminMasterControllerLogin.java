@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.loja.config.security.JwtTokenProvider;
-import org.example.loja.dto.loginDTO;
+import org.example.loja.dto.LoginDTO;
 import org.example.loja.entities.AdminMasterEntity;
 import org.example.loja.services.AdminMasterService;
 import org.example.loja.util.Authorization;
@@ -53,7 +53,7 @@ public class AdminMasterControllerLogin {
             )
     })
     @PostMapping
-    public ResponseEntity<?> login(@RequestBody loginDTO login) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO login) {
         try {
             AdminMasterEntity adminMaster = adminMasterService.getAdminMasterByEmail(login.getEmail());
             if (!Authorization.isAuthorized(login.getPassword(), adminMaster.getPassword())) {

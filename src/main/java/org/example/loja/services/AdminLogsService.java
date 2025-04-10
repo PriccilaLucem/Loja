@@ -1,8 +1,8 @@
 package org.example.loja.services;
 
 import org.example.loja.entities.AdminLogsEntity;
-import org.example.loja.entities.StoreAdminEntity;
-import org.example.loja.repository.StoreAdminLogsRepository;
+import org.example.loja.inteface.LoggableUser;
+import org.example.loja.repository.StoreLogsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
 public class AdminLogsService {
 
     @Autowired
-    StoreAdminLogsRepository logsRepository;
+    StoreLogsRepository logsRepository;
 
-    public void saveLogAction(StoreAdminEntity admin, String action, String description, double lat, double lon) {
+    public void saveLogAction(LoggableUser user, String action, String description, double lat, double lon) {
         AdminLogsEntity log = new AdminLogsEntity();
-        log.setStoreAdmin(admin);
+        log.setUserType(user.getRole().getFirst());
         log.setAction(action);
         log.setDescription(description);
         log.setTimestamp(LocalDateTime.now());

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.loja.inteface.LoggableUser;
 
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class StoreAdminEntity {
+public class StoreAdminEntity implements LoggableUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,8 +32,6 @@ public class StoreAdminEntity {
 
     private Boolean status;
 
-    @OneToMany(mappedBy = "storeAdmin", cascade = CascadeType.PERSIST, orphanRemoval = false)
-    private List<AdminLogsEntity> adminLog;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
