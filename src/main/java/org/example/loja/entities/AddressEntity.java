@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "addresses")
 @Getter
@@ -26,5 +28,9 @@ public class AddressEntity {
     @ManyToOne
     @JoinColumn(name = "costumer_id")
     private CostumerEntity costumer;
+
+    @OneToMany
+    @JoinColumn(name = "address_id")
+    private List<EmployeeEntity> employee;
 }
 
