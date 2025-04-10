@@ -36,14 +36,16 @@ public class SecurityConfig {
     private static final String[] PERMIT_ALL_PATHS = {
             "/admin/master/login",
             "/api/v1/store-admins/login",
+            "/api/v1/store-admins/register",
+            "/api/v1/store-manager/login",
+            "/api/v1/graphql",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/swagger-resources/**",
-            "/webjars/**",
-            "/api/v1/store-admins/register",
-            "/api/v1/store-manager/login",
+            "/webjars/**"
     };
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {

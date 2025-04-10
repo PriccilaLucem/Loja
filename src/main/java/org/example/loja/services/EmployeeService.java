@@ -27,7 +27,7 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployee(UUID uuid){
-        int affectedRows = employeeRepository.deleteEmployeeEntitiesBy(uuid);
+        int affectedRows = employeeRepository.deleteEmployeeEntitiesById(uuid);
         return affectedRows > 0;
     }
 

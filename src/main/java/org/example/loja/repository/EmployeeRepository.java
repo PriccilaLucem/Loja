@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, UUID> {
 
 
-    int deleteEmployeeEntitiesBy(UUID id);
+    int deleteEmployeeEntitiesById(UUID id);
 }

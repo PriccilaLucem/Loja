@@ -2,6 +2,7 @@ package org.example.loja.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,10 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * Controller for handling store manager authentication and JWT token generation.
+ */
+@Tag(name = "Store Manager Authentication",
+        description = "Endpoints for store manager login and JWT token generation")
 @RestController
-@Tag(name = "Store Manager Login Controller", description = "Endpoints for Store Manager management")
 @RequestMapping("/api/v1/store-manager/login")
 public class StoreManagerLoginController {
+
     @Autowired
     private JwtTokenProvider provider;
 
@@ -32,24 +38,69 @@ public class StoreManagerLoginController {
     private StoreManagerService storeManagerService;
 
     @Operation(
-            summary = "Authenticate a store manager",
-            description = "Authenticates a Store Manager with valid credentials (email and password) and returns a JWT token. If the credentials are invalid, an error message is returned."
+            summary = "Authenticate store manager",
+            description = """
+            Authenticates a store manager with email and password credentials.
+            Upon successful authentication, returns a JWT token that should be used 
+            for subsequent authenticated requests.
+            
+            **Example Request:**
+            ```json
+            {
+              "email": "manager@example.com",
+              "password": "securePassword123"
+            }
+            ```
+            """,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Store manager login credentials",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = LoginDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Sample login",
+                                    value = "{\"email\": \"manager@example.com\", \"password\": \"securePassword123\"}"
+                            )
+                    )
+            )
     )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Login successful. JWT token returned.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                    description = "Authentication successful",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            examples = @ExampleObject(
+                                    name = "Success response",
+                                    value = "{\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"}"
+                            )
+                    )
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "User credentials are invalid.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))
+                    description = "Invalid credentials",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            examples = @ExampleObject(
+                                    name = "Error response",
+                                    value = "{\"error\": \"Invalid credentials\"}"
+                            )
+                    )
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Internal unexpected error.",
-                    content = @Content(mediaType = "application/json")
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Map.class),
+                            examples = @ExampleObject(
+                                    name = "Error response",
+                                    value = "{\"error\": \"An unexpected error occurred\"}"
+                            )
+                    )
             )
     })
     @PostMapping
@@ -65,7 +116,8 @@ public class StoreManagerLoginController {
             String token = provider.generateStoreManagerToken(storeManager);
             return ResponseEntity.ok().body(Map.of("token", token));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "An unexpected error occurred"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "An unexpected error occurred"));
         }
     }
 }
