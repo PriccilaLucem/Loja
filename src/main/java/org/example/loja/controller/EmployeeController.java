@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.loja.entities.EmployeeEntity;
 import org.example.loja.services.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Operation(summary = "Get all employees", description = "Retrieve all employees")
     @ApiResponses(value = {

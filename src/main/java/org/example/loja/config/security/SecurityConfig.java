@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/store/store-admins/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
-                        .requestMatchers("/api/v1/store/store-manager/").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/store-manager/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store/store-manager").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store/products").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN", "STORE_MANAGER")
                         .requestMatchers("/api/v1/store/products/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN", "STORE_MANAGER")

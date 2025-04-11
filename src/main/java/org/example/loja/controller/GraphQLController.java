@@ -2,6 +2,8 @@ package org.example.loja.controller;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,7 @@ public class GraphQLController {
     @Autowired
     private GraphQL graphQL;
 
+    private static  final Logger logger = LoggerFactory.getLogger(GraphQLController.class);
     /**
      * Executes a GraphQL query or mutation.
      *
@@ -117,13 +120,16 @@ public class GraphQLController {
             );
 
             if (!result.getErrors().isEmpty()) {
+                logger.error(result.getErrors().toString());
                 return ResponseEntity.badRequest().body(Map.of(
                         "errors", result.getErrors()
                 ));
             }
+            logger.info("GraphQL result: {}", result.getData().toString());
 
             return ResponseEntity.ok(result.getData());
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return ResponseEntity.internalServerError().body(Map.of(
                     "error", "Internal Server Error",
                     "details", e.getMessage()));

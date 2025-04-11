@@ -11,11 +11,13 @@ import org.example.loja.dto.LoginDTO;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.services.StoreAdminServices;
 import org.example.loja.util.Authorization;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @Tag(name = "Store Admin Login Controller", description = "Endpoints for Store Admin management")

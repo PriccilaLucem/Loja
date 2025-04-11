@@ -163,6 +163,9 @@ public class StoreAdminController {
         } catch (IllegalArgumentException e) {
             logger.warn("Failed to delete admin: store admin with ID {} not found", id);
             return ResponseEntity.status(404).body(Map.of("error", "Store Admin not found."));
+        }catch (Exception e){
+            logger.error("Failed to delete store admin: {}", e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("error", "Internal Server Error"));
         }
     }
 }
