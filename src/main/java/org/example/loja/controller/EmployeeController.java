@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
 
-
 @Tag(name = "Employee Controller", description = "Manage employees and their permissions")
 @RestController
 @RequestMapping("/api/v1/store/{storeId}/employees")
@@ -36,9 +35,9 @@ public class EmployeeController {
     })
     @GetMapping("/list")
     public ResponseEntity<?> getAllEmployees() {
+        logger.info("Fetching all employees");
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
-
 
     @Operation(summary = "Create employee", description = "Create a new employee")
     @ApiResponses(value = {
@@ -49,10 +48,13 @@ public class EmployeeController {
     })
     @PostMapping
     public ResponseEntity<?> postEmployee(@RequestBody EmployeeEntity employee) {
+        logger.info("Attempting to create a new employee: {}", employee.getName());
         UUID id = employeeService.saveEmployee(employee);
         if (id != null) {
+            logger.info("Employee created with ID: {}", id);
             return ResponseEntity.ok().body(Map.of("message", "EmployeeCreated", "id", id));
         } else {
+            logger.warn("Failed to create employee: {}", employee);
             return ResponseEntity.badRequest().body(Map.of("error", "Employee not created"));
         }
     }
@@ -65,20 +67,22 @@ public class EmployeeController {
     })
     @DeleteMapping(value = "/delete/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable UUID id) {
+        logger.info("Request to delete employee with ID: {}", id);
         try {
             boolean isDeleted = employeeService.deleteEmployee(id);
             if (isDeleted) {
+                logger.info("Employee deleted with ID: {}", id);
                 return ResponseEntity.noContent().build();
             }
+            logger.warn("Employee not found with ID: {}", id);
             return ResponseEntity.status(404).body(Map.of("error", "Employee not found"));
         } catch (Exception e) {
+            logger.error("Error deleting employee with ID {}: {}", id, e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "An unexpected error occurred"));
         }
     }
 
-
-    @Operation(summary = "Add permission to employee",
-            description = "Add a permission to an employee")
+    @Operation(summary = "Add permission to employee", description = "Add a permission to an employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Permission added to employee"),
             @ApiResponse(responseCode = "404", description = "Employee not found"),
@@ -87,23 +91,26 @@ public class EmployeeController {
     })
     @PutMapping("/add/permission/{employeeId}/{permissionId}")
     public ResponseEntity<?> putEmployeePermission(@PathVariable UUID employeeId, @PathVariable Long permissionId) {
+        logger.info("Adding permission {} to employee {}", permissionId, employeeId);
         try {
             boolean updated = employeeService.addPermissionToEmployee(employeeId, permissionId);
             if (updated) {
+                logger.info("Permission {} added to employee {}", permissionId, employeeId);
                 return ResponseEntity.ok().body(Map.of("message", "Permission added to employee"));
             } else {
+                logger.warn("Employee not found with ID: {}", employeeId);
                 return ResponseEntity.status(404).body(Map.of("error", "Employee not found"));
             }
         } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request: {}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            logger.error("Error adding permission {} to employee {}: {}", permissionId, employeeId, e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "An unexpected error occurred"));
         }
     }
 
-
-    @Operation(summary = "Remove permission from employee",
-            description = "Remove a permission from an employee")
+    @Operation(summary = "Remove permission from employee", description = "Remove a permission from an employee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Permission removed from employee"),
             @ApiResponse(responseCode = "404", description = "Employee not found"),
@@ -112,16 +119,21 @@ public class EmployeeController {
     })
     @PutMapping("/remove/permission/{employeeId}/{permissionId}")
     public ResponseEntity<?> removeEmployeePermission(@PathVariable UUID employeeId, @PathVariable Long permissionId) {
+        logger.info("Removing permission {} from employee {}", permissionId, employeeId);
         try {
             boolean updated = employeeService.removePermissionFromEmployee(employeeId, permissionId);
             if (updated) {
+                logger.info("Permission {} removed from employee {}", permissionId, employeeId);
                 return ResponseEntity.ok().body(Map.of("message", "Permission removed from employee"));
             } else {
+                logger.warn("Employee not found with ID: {}", employeeId);
                 return ResponseEntity.status(404).body(Map.of("error", "Employee not found"));
             }
         } catch (IllegalArgumentException e) {
+            logger.warn("Invalid request: {}", e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            logger.error("Error removing permission {} from employee {}: {}", permissionId, employeeId, e.getMessage());
             return ResponseEntity.status(500).body(Map.of("error", "An unexpected error occurred"));
         }
     }

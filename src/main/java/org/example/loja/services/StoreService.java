@@ -23,10 +23,6 @@ public class StoreService {
     StoreAdminRepository storeAdminRepository;
 
     public Long saveStore(StoreEntity store, UUID storeAdmin) throws IllegalArgumentException {
-        if (storeAdmin == null) {
-            throw new IllegalArgumentException("StoreAdmin UUID cannot be null");
-        }
-
         store.setStoreAdmin(storeAdminRepository.findById(storeAdmin)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Credentials")));
 
