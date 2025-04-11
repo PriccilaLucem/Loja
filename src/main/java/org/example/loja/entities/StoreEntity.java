@@ -33,7 +33,6 @@ public class StoreEntity {
     @NotNull
     private Set<AddressEntity> locations;
 
-
     private String imageURL;
 
     private String description;
@@ -47,7 +46,7 @@ public class StoreEntity {
     private Boolean active;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductEntity> productEntities;
+    private List<ProductEntity> products;
 
     @ManyToOne
     @JoinColumn(name = "store_admin_id")
@@ -58,4 +57,8 @@ public class StoreEntity {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EmployeeEntity> employee = new HashSet<>();
+
+    public void addProduct(ProductEntity product) {
+        this.products.add(product);
+    }
 }

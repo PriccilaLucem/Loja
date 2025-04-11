@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,7 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
@@ -67,16 +65,21 @@ public class SecurityConfig {
                         })))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PERMIT_ALL_PATHS).permitAll()
-                        .requestMatchers("/api/v1/store-admins/").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/store-admins/").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/store-admins/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
-                        .requestMatchers("/api/v1/store-manager").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/store-manager/").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
+                        .requestMatchers("/api/v1/store/store-manager").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN")
                         .requestMatchers("/api/v1/store/products").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN", "STORE_MANAGER")
+                        .requestMatchers("/api/v1/store/products/**").hasAnyRole("ADMIN_MASTER", "STORE_ADMIN", "STORE_MANAGER")
                         .anyRequest().authenticated()
                 );
 
         logger.debug("Security filter chain configured successfully.");
         return http.build();
     }
+
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {

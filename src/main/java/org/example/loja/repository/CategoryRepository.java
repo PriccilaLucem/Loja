@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CategoryInterface extends JpaRepository<CategoryEntity, Long> {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     List<CategoryEntity> findAllById(Iterable<Long> ids);
 
 }

@@ -6,7 +6,6 @@ import org.example.loja.config.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 

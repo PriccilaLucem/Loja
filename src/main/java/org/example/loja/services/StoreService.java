@@ -1,5 +1,6 @@
 package org.example.loja.services;
 
+import org.example.loja.entities.ProductEntity;
 import org.example.loja.entities.StoreAdminEntity;
 import org.example.loja.entities.StoreEntity;
 import org.example.loja.repository.StoreAdminRepository;
@@ -58,7 +59,14 @@ public class StoreService {
         }
     }
 
-        private void validateStore(StoreEntity store) throws IllegalArgumentException {
+    public boolean addProductsToStore(Long storeId, ProductEntity product) throws IllegalArgumentException {
+        StoreEntity store = storeRepository.findById(storeId).orElseThrow(() -> new IllegalArgumentException("Store not found"));
+        store.addProduct(product);
+        storeRepository.save(store);
+        return true;
+    }
+
+    private void validateStore(StoreEntity store) throws IllegalArgumentException {
 
             if (store.getDescription() == null || store.getDescription().length() > 250) {
                 throw new IllegalArgumentException("Store Description is null or too long");

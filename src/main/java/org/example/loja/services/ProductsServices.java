@@ -1,9 +1,8 @@
 package org.example.loja.services;
 
 import org.example.loja.dto.ProductDTO;
-import org.example.loja.entities.CategoryEntity;
 import org.example.loja.entities.ProductEntity;
-import org.example.loja.repository.CategoryInterface;
+import org.example.loja.repository.CategoryRepository;
 import org.example.loja.repository.ProductsRepository;
 import org.example.loja.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class ProductsServices {
     private StoreRepository storeRepository;
 
     @Autowired
-    private CategoryInterface categoryInterface;
+    private CategoryRepository categoryInterface;
     public List<ProductEntity> getAllProducts(){
         return productsRepository.findAll();
     }
@@ -49,7 +48,7 @@ public class ProductsServices {
     public List<ProductEntity> getProductsByCategories(String category){
         return productsRepository.findAllByCategories_Name(category);
     }
-    public long createProduct(ProductDTO productDTO){
+    public ProductEntity createProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
         product.setName(productDTO.getName());
         product.setPrice(productDTO.getPrice());
@@ -60,17 +59,12 @@ public class ProductsServices {
         product.setCategories(new HashSet<>(categoryInterface.findAllById(productDTO.getCategories())));
 
         validateProduct(product);
-        productsRepository.save(product);
-        return product.getId();
+        return productsRepository.save(product);
     }
 
     public boolean updateProduct(ProductEntity product){
-        try {
-            productsRepository.save(product);
-            return true;
-        }catch (Exception e){
-            return false;
-        }
+        productsRepository.save(product);
+        return true;
     }
     public void validateProduct(ProductEntity product) throws IllegalArgumentException{
         if(product == null){

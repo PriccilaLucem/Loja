@@ -7,20 +7,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.loja.entities.EmployeeEntity;
-import org.example.loja.entities.PermissionEntity;
 import org.example.loja.services.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 
 @Tag(name = "Employee Controller", description = "Manage employees and their permissions")
 @RestController
-@RequestMapping("/api/v1/employees")
+@RequestMapping("/api/v1/store/{storeId}/employees")
 public class EmployeeController {
 
     @Autowired
@@ -32,7 +30,7 @@ public class EmployeeController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = EmployeeEntity.class, type = "array")))
     })
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<?> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
@@ -69,24 +67,6 @@ public class EmployeeController {
                 return ResponseEntity.noContent().build();
             }
             return ResponseEntity.status(404).body(Map.of("error", "Employee not found"));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("error", "An unexpected error occurred"));
-        }
-    }
-
-
-    @Operation(summary = "Get all permissions", description = "Retrieve all available permissions")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved permissions",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PermissionEntity.class, type = "array"))),
-            @ApiResponse(responseCode = "500", description = "An unexpected error occurred")
-    })
-    @GetMapping("/list/permission")
-    public ResponseEntity<?> getPermission() {
-        try {
-            List<PermissionEntity> permissions = employeeService.getPermissions();
-            return ResponseEntity.ok(permissions);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "An unexpected error occurred"));
         }

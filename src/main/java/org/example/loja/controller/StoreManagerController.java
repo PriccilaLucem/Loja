@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @Tag(name = "Store Manager Controller", description = "Endpoints for Store Manager management")
-@RequestMapping("/api/v1/store-manager")
+@RequestMapping("/api/v1/store/{storeId}/store-manager")
 public class StoreManagerController {
 
     @Autowired
@@ -75,18 +75,12 @@ public class StoreManagerController {
             @ApiResponse(responseCode = "404", description = "Store manager not found"),
             @ApiResponse(responseCode = "500", description = "Unexpected error occurred")
     })
-    @PutMapping(value = "/deactivate/{id}/store/{storeId}")
+    @PutMapping(value = "/deactivate/{id}")
     public ResponseEntity<?> putDeactivateManager(
-            @PathVariable(value = "id") UUID storeManagerId,
-            @PathVariable(value = "storeId") Long storeId,
-            @RequestHeader(name = "Authorization") String token
+            @PathVariable(value = "id") UUID storeManagerId
     ) {
         try {
-            UUID AdminId = JwtTokenProvider.extractIdFromToken(token);
-            if (!storeManagerService.verifyIfIsAuthorized(AdminId, storeId)) {
-                return ResponseEntity.status(403).body(Map.of("error", "You are not authorized to update this store"));
-            }
-            boolean isUpdated = storeManagerService.dissociateStoreManager(storeManagerId);
+           boolean isUpdated = storeManagerService.dissociateStoreManager(storeManagerId);
             if (isUpdated) {
                 return ResponseEntity.accepted().body(Map.of("message", "Store manager deactivated"));
             } else {
@@ -104,17 +98,12 @@ public class StoreManagerController {
             @ApiResponse(responseCode = "404", description = "Store manager not found"),
             @ApiResponse(responseCode = "500", description = "Unexpected error occurred")
     })
-    @PutMapping(value = "/activate/{id}/store/{storeId}")
+    @PutMapping(value = "/activate/{id}")
     public ResponseEntity<?> putActiveManager(
             @PathVariable(value = "id") UUID storeManagerId,
-            @PathVariable(value = "storeId") Long storeId,
-            @RequestHeader(name = "Authorization") String token
+            @PathVariable(value = "storeId") Long storeId
     ) {
         try {
-            UUID adminId = JwtTokenProvider.extractIdFromToken(token);
-            if (!storeManagerService.verifyIfIsAuthorized(adminId, storeId)) {
-                return ResponseEntity.status(403).body(Map.of("error", "You are not authorized to update this store"));
-            }
             if (storeManagerService.activateStoreManager(storeManagerId, storeId)) {
                 return ResponseEntity.accepted().body(Map.of("message", "Store manager activated"));
             }
@@ -127,14 +116,9 @@ public class StoreManagerController {
     @Operation(summary = "Update a store manager", description = "Updates the basic information of an existing store manager")
     @PutMapping
     public ResponseEntity<?> put(
-            @RequestBody StoreManagerDTO storeManager,
-            @RequestHeader(name = "Authorization") String token
+            @RequestBody StoreManagerDTO storeManager
     ) {
         try {
-            UUID AdminId = JwtTokenProvider.extractIdFromToken(token);
-            if (!storeManagerService.verifyIfIsAuthorized(AdminId, storeManager.getStoreId())) {
-                return ResponseEntity.status(403).body(Map.of("error", "You are not authorized to update this store"));
-            }
             storeManagerService.saveStoreManager(storeManager);
             return ResponseEntity.accepted().body(Map.of("message", "Store manager updated"));
         } catch (IllegalArgumentException e) {
@@ -145,18 +129,13 @@ public class StoreManagerController {
     }
 
     @Operation(summary = "Delete a store manager", description = "Removes a manager associated with a specific store from the system")
-    @DeleteMapping(value = "/{id}/store/{storeId}")
+    @DeleteMapping(value = "/{storeManagerId}")
     public ResponseEntity<?> delete(
-            @PathVariable UUID id,
-            @PathVariable Long storeId,
+            @PathVariable UUID storeManagerId,
             @RequestHeader(name = "Authorization") String token
     ) {
         try {
-            UUID AdminId = JwtTokenProvider.extractIdFromToken(token);
-            if (!storeManagerService.verifyIfIsAuthorized(AdminId, storeId)) {
-                return ResponseEntity.status(403).body(Map.of("error", "You are not authorized to update this store"));
-            }
-            boolean isDeleted = storeManagerService.deleteStoreManager(id);
+            boolean isDeleted = storeManagerService.deleteStoreManager(storeManagerId);
             if (isDeleted) {
                 return ResponseEntity.accepted().body(Map.of("message", "Store manager deleted"));
             } else {

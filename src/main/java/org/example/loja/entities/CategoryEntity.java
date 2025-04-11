@@ -13,7 +13,7 @@ import lombok.*;
 public class CategoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
 
@@ -22,4 +22,5 @@ public class CategoryEntity {
 
     @Column
     private String description;
+
 }

@@ -4,10 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.example.loja.entities.AdminMasterEntity;
-import org.example.loja.entities.RoleEntity;
-import org.example.loja.entities.StoreAdminEntity;
-import org.example.loja.entities.StoreManagerEntity;
+import org.example.loja.entities.*;
+import org.example.loja.enums.TokenType;
 import org.example.loja.util.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,14 +39,20 @@ public class JwtTokenProvider {
     public JwtTokenProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
     private final String issuer = "loja";
+
 
     @Value("${PUBLIC_KEY}")
     private String publicKeyPath;
 
     @Value("${PRIVATE_KEY}")
     private String privateKeyPath;
+
+    public TokenType parseTypeOfToken(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        String type = jwt.getClaim("type").asString();
+        return TokenType.fromString(type);
+    }
 
     public RSAPublicKey getPublicKey() throws Exception {
         logger.debug("Loading public key from path: {}", publicKeyPath);
@@ -147,6 +151,7 @@ public class JwtTokenProvider {
                     .withClaim("email", admin.getEmail())
                     .withArrayClaim("roles", admin.getRole().stream()
                             .map(RoleEntity::getName).toArray(String[]::new))
+                    .withClaim("type", "adminMaster-")
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
                     .sign(algorithm);
@@ -173,6 +178,8 @@ public class JwtTokenProvider {
                             .map(RoleEntity::getName).toArray(String[]::new))
                     .withClaim("name", admin.getName())
                     .withClaim("id", admin.getId().toString())
+                    .withClaim("stores", admin.getManagedStore().stream().map(StoreEntity::getId).toString())
+                    .withClaim("type", "storeAdmin")
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
                     .sign(algorithm);
@@ -200,7 +207,9 @@ public class JwtTokenProvider {
                     .withArrayClaim("roles", manager.getRole().stream()
                             .map(RoleEntity::getName).toArray(String[]::new))
                     .withClaim("name", manager.getName())
+                    .withClaim("store", manager.getStore().getId().toString())
                     .withClaim("id", manager.getId().toString())
+                    .withClaim("type", "manager")
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 8000 * 60 * 60))
                     .sign(algorithm);
@@ -232,5 +241,19 @@ public class JwtTokenProvider {
             logger.error("Failed to decode JWT token", e);
             throw new IllegalArgumentException("Failed to decode JWT token", e);
         }
+    }
+
+    public List<String> parseStoresFromToken(String token, String TokenType) {
+        if (TokenType.equals("storeAdmin")) {
+            logger.debug("Parsing JWT token...");
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("stores").asList(String.class);
+        } else if (TokenType.equals("manager")) {
+            logger.debug("Parsing JWT token...");
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("stores").asList(String.class);
+
+        }
+        return null;
     }
 }
