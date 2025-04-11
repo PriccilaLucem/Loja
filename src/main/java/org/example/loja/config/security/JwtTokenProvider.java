@@ -79,32 +79,6 @@ public class JwtTokenProvider {
         return List.of(jwt.getClaim("roles").asArray(String.class));
     }
 
-    public String generateUserAdminToken(StoreAdminEntity admin) throws Exception {
-        logger.debug("Generating JWT for StoreAdminEntity with ID: {}", admin.getId());
-        try {
-            Algorithm algorithm = Algorithm.RSA256(
-                    (RSAPublicKey) Authorization.getPublicKey(publicKeyPath),
-                    (RSAPrivateKey) Authorization.getPrivateKey(privateKeyPath)
-            );
-
-            String token = JWT.create()
-                    .withIssuer(issuer)
-                    .withArrayClaim("roles", admin.getRole().stream()
-                            .map(RoleEntity::getName).toArray(String[]::new))
-                    .withClaim("name", admin.getName())
-                    .withClaim("id", admin.getId().toString())
-                    .withClaim("email", admin.getEmail())
-                    .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
-                    .sign(algorithm);
-
-            logger.debug("JWT generated successfully.");
-            return token;
-        } catch (Exception e) {
-            logger.error("Error generating JWT for StoreAdminEntity", e);
-            throw e;
-        }
-    }
     public String getUsernameFromToken(String token) {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getClaim("email").asString();

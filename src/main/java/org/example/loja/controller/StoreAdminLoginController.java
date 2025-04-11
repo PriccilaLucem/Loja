@@ -59,7 +59,7 @@ public class StoreAdminLoginController {
             StoreAdminEntity storeAdmin = storeAdminServices.getStoreAdminByEmail(login.getEmail());
 
             if (Authorization.isAuthorized(login.getPassword(), storeAdmin.getPassword())) {
-                String token = provider.generateUserAdminToken(storeAdmin);
+                String token = provider.generateStoreAdminToken(storeAdmin);
                 return ResponseEntity.ok().body(Map.of("token", token));
             }
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
