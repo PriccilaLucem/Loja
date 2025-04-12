@@ -1,19 +1,22 @@
 package org.example.loja.controller;
 
+import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,13 +34,6 @@ public class GraphQLController {
     private GraphQL graphQL;
 
     private static  final Logger logger = LoggerFactory.getLogger(GraphQLController.class);
-    /**
-     * Executes a GraphQL query or mutation.
-     *
-     * @param query The GraphQL query/mutation string
-     * @param variables Optional variables for the query/mutation
-     * @return The result of the GraphQL execution
-     */
     @Operation(
             summary = "Execute GraphQL query",
             description = """
@@ -90,49 +86,37 @@ public class GraphQLController {
                             description = "Internal server error",
                             content = @Content(schema = @Schema(implementation = Map.class)))
             })
-                    @GetMapping("/graphql")
-    public ResponseEntity<Object> executeGraphQLQuery(
-            @Parameter(
-                    description = "GraphQL query/mutation string",
-                    required = true,
-                    examples = {
-                            @ExampleObject(
-                                    name = "Get all products",
-                                    value = "{ products { id name price } }"),
-                            @ExampleObject(
-                                    name = "Get product by ID",
-                                    value = "query($id: ID!) { productById(id: $id) { name price description } }"),
-                            @ExampleObject(
-                                    name = "Get products by category",
-                                    value = "query($category: String!) { productsByCategory(category: $category) { id name } }")
-                    })
-            @RequestParam String query,
+        @PostMapping("/graphql")  // Changed to POST
+        public ResponseEntity<Object> executeGraphQLQuery(
+                @RequestBody Map<String, Object> request) {  // Changed to RequestBody
 
-            @Parameter(
-                    description = "Variables for the GraphQL query/mutation",
-                    example = "{\"id\": \"123\", \"category\": \"electronics\"}")
-            @RequestParam(required = false) Map<String, Object> variables) {
+            try {
+                if (request == null || !request.containsKey("query")) {
+                    logger.error("GraphQL request must contain a 'query' field");
+                    return ResponseEntity.badRequest()
+                            .body(Map.of("error", "GraphQL request must contain a 'query' field"));
+                }
 
-        try {
-            ExecutionResult result = graphQL.execute(executionInput -> executionInput
-                    .query(query)
-                    .variables(variables != null ? variables : Map.of())
-            );
+                String query = (String) request.get("query");
+                Map<String, Object> variables = (Map<String, Object>) request.getOrDefault("variables", Collections.emptyMap());
 
-            if (!result.getErrors().isEmpty()) {
-                logger.error(result.getErrors().toString());
-                return ResponseEntity.badRequest().body(Map.of(
-                        "errors", result.getErrors()
-                ));
+                ExecutionResult result = graphQL.execute(ExecutionInput.newExecutionInput()
+                        .query(query)
+                        .variables(variables)
+                        .build());
+
+                if (result.getErrors() != null && !result.getErrors().isEmpty()) {
+                    logger.error("GraphQL errors: {}", result.getErrors());
+                    return ResponseEntity.badRequest().body(Map.of("errors", result.getErrors()));
+                }
+
+                logger.info("GraphQL result: {}", Optional.ofNullable(result.getData()));
+                return ResponseEntity.ok(result.toSpecification());
+            } catch (Exception e) {
+                logger.error("GraphQL execution error: {}", e.getMessage());
+                return ResponseEntity.internalServerError().body(Map.of(
+                        "error", "Internal Server Error",
+                "message", e.getMessage()));
             }
-            logger.info("GraphQL result: {}", result.getData().toString());
-
-            return ResponseEntity.ok(result.getData());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Internal Server Error",
-                    "details", e.getMessage()));
-        }
     }
 }

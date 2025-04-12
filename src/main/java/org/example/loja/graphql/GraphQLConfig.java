@@ -4,6 +4,7 @@ import graphql.Scalars;
 import graphql.language.IntValue;
 import graphql.schema.*;
 import org.example.loja.services.ProductsServices;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +23,12 @@ public class GraphQLConfig {
                 .description("Custom Scalar for Java Long")
                 .coercing(new Coercing<Long, Long>() {
                     @Override
-                    public Long serialize(Object dataFetcherResult) {
+                    public Long serialize(@NotNull Object dataFetcherResult) {
                         return ((Number) dataFetcherResult).longValue();
                     }
 
                     @Override
-                    public Long parseValue(Object input) {
+                    public Long parseValue(@NotNull Object input) {
                         if (input instanceof Number) {
                             return ((Number) input).longValue();
                         }
@@ -35,7 +36,7 @@ public class GraphQLConfig {
                     }
 
                     @Override
-                    public Long parseLiteral(Object input) {
+                    public Long parseLiteral(@NotNull Object input) {
                         if (input instanceof IntValue) {
                             return ((IntValue) input).getValue().longValue();
                         }
