@@ -20,10 +20,12 @@ public class ProductsServices {
     private StoreRepository storeRepository;
 
     @Autowired
-    private CategoryRepository categoryInterface;
+    private CategoryRepository categoryRepository;
+
     public List<ProductEntity> getAllProducts(){
         return productsRepository.findAll();
     }
+
     public boolean deleteProduct(Long id){
         int affectedRows = productsRepository.deleteProductEntitiesById(id);
         return affectedRows > 0;
@@ -40,7 +42,7 @@ public class ProductsServices {
         if (newQuantity < 0) {
             throw new IllegalArgumentException("Resulting product quantity cannot be less than zero");
         }
-
+        product.setQuantity(newQuantity);
         productsRepository.save(product);
 
         return product.getQuantity();
@@ -56,34 +58,35 @@ public class ProductsServices {
         product.setBrand(productDTO.getBrand());
         product.setImage(productDTO.getImage());
         product.setStore(storeRepository.findById(productDTO.getStoreId()).orElseThrow(() -> new IllegalArgumentException("Invalid Store")));
-        product.setCategories(new HashSet<>(categoryInterface.findAllById(productDTO.getCategories())));
+        product.setCategories(new HashSet<>(categoryRepository.findAllById(productDTO.getCategories())));
 
         validateProduct(product);
         return productsRepository.save(product);
     }
 
     public boolean updateProduct(ProductEntity product){
+        validateProduct(product);
         productsRepository.save(product);
         return true;
     }
     public void validateProduct(ProductEntity product) throws IllegalArgumentException{
         if(product == null){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product object");
         }
         if(product.getName().isBlank() || product.getPrice() < 0){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product Price");
         }
         if(product.getQuantity() < 0){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product Quantity");
         }
         if(product.getCategories().isEmpty()){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product Categories");
         }
         if(product.getStore().getId() == null){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product Store");
         }
         if(product.getImage().isBlank() || !product.getImage().startsWith("data:image/")){
-            throw new IllegalArgumentException("Invalid Product");
+            throw new IllegalArgumentException("Invalid Product Image");
         }
     }
 }

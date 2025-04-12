@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class AdminLogsServiceTest {
+class AdminLogsServiceTests {
 
     private static AdminLogsService adminLogsService;
 

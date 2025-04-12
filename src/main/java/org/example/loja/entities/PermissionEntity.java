@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class PermissionEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "permission_employee", joinColumns = @JoinColumn(name = "permission_id"), inverseJoinColumns = @JoinColumn(name = "employee_id"))
-    private Set<EmployeeEntity> employee;
+    private Set<EmployeeEntity> employee = new HashSet<>();
 
     public void addEmployee(EmployeeEntity employee) {
         this.employee.add(employee);
