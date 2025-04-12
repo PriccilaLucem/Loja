@@ -40,7 +40,7 @@ class StoreServiceTest {
     void saveStore_ShouldThrowException_WhenStoreAdminIsNull() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> storeService.saveStore(new StoreEntity(), null));
-        assertEquals("StoreAdmin UUID cannot be null", exception.getMessage());
+        assertEquals("Invalid Credentials", exception.getMessage());
     }
 
     @Test

@@ -36,13 +36,11 @@ public class StoreManagerController {
     })
     @PostMapping
     public ResponseEntity<?> post(
-            @RequestBody StoreManagerDTO storeManager,
-            @RequestHeader(name = "Authorization") String token
+            @RequestBody StoreManagerDTO storeManager
     ) {
         logger.info("POST /store-manager - Creating store manager for storeId: {}", storeManager.getStoreId());
+
         try {
-            UUID adminId = JwtTokenProvider.extractIdFromToken(token);
-            logger.debug("Token validated. Admin ID: {}", adminId);
 
             UUID id = storeManagerService.saveStoreManager(storeManager);
             logger.info("Store manager created successfully. ID: {}", id);
@@ -62,7 +60,7 @@ public class StoreManagerController {
 
     @Operation(summary = "Deactivate a store manager", description = "Deactivates the association between a manager and a store")
     @PutMapping(value = "/deactivate/{id}")
-    public ResponseEntity<?> putDeactivateManager(@PathVariable("id") UUID storeManagerId) {
+    public ResponseEntity<?> putDeactivateManager(@PathVariable(value = "id") UUID storeManagerId) {
         logger.info("PUT /store-manager/deactivate/{} - Request to deactivate store manager", storeManagerId);
         try {
             boolean isUpdated = storeManagerService.dissociateStoreManager(storeManagerId);
