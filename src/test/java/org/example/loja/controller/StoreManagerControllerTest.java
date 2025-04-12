@@ -9,6 +9,7 @@ import org.mockito.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,12 +31,11 @@ public class StoreManagerControllerTest {
     public void setup() {
         MockitoAnnotations.openMocks(this);
 
-        // Simula o comportamento do JwtTokenProvider
         mockStaticJwtTokenProvider();
     }
 
     private void mockStaticJwtTokenProvider() {
-        mockStatic(JwtTokenProvider.class);
+        mockStatic();
         when(JwtTokenProvider.extractIdFromToken(anyString())).thenReturn(mockAdminId);
     }
 
@@ -53,8 +53,8 @@ public class StoreManagerControllerTest {
 
         ResponseEntity<?> response = controller.post(dto, "Bearer token");
 
-        assertEquals(201, response.getStatusCodeValue());
-        assertTrue(((Map<?, ?>) response.getBody()).containsKey("id"));
+        assertEquals(201, response.getStatusCode().value());
+        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).containsKey("id"));
     }
 
     @Test
@@ -66,8 +66,8 @@ public class StoreManagerControllerTest {
 
         ResponseEntity<?> response = controller.post(dto, "Bearer token");
 
-        assertEquals(403, response.getStatusCodeValue());
-        assertTrue(((Map<?, ?>) response.getBody()).containsKey("error"));
+        assertEquals(403, response.getStatusCode().value());
+        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).containsKey("error"));
     }
 
     @Test
@@ -80,8 +80,8 @@ public class StoreManagerControllerTest {
 
         ResponseEntity<?> response = controller.post(dto, "Bearer token");
 
-        assertEquals(500, response.getStatusCodeValue());
-        assertTrue(((Map<?, ?>) response.getBody()).containsKey("error"));
+        assertEquals(500, response.getStatusCode().value());
+        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).containsKey("error"));
     }
 
     @Test
@@ -89,9 +89,9 @@ public class StoreManagerControllerTest {
         when(service.verifyIfIsAuthorized(mockAdminId, mockStoreId)).thenReturn(true);
         when(service.dissociateStoreManager(mockStoreManagerId)).thenReturn(true);
 
-        ResponseEntity<?> response = controller.putDeactivateManager(mockStoreManagerId, mockStoreId, "Bearer token");
+        ResponseEntity<?> response = controller.putDeactivateManager(mockStoreManagerId)
 
-        assertEquals(202, response.getStatusCodeValue());
+        assertEquals(202, response.getStatusCode().value());
         assertTrue(((Map<?, ?>) response.getBody()).get("message").equals("Store manager deactivated"));
     }
 
@@ -102,7 +102,7 @@ public class StoreManagerControllerTest {
 
         ResponseEntity<?> response = controller.putActiveManager(mockStoreManagerId, mockStoreId, "Bearer token");
 
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class StoreManagerControllerTest {
 
         ResponseEntity<?> response = controller.delete(mockStoreManagerId, mockStoreId, "Bearer token");
 
-        assertEquals(202, response.getStatusCodeValue());
+        assertEquals(202, response.getStatusCode().value());
         assertEquals("Store manager deleted", ((Map<?, ?>) response.getBody()).get("message"));
     }
 
@@ -121,16 +121,16 @@ public class StoreManagerControllerTest {
         when(service.verifyIfIsAuthorized(mockAdminId, mockStoreId)).thenReturn(true);
         when(service.deleteStoreManager(mockStoreManagerId)).thenReturn(false);
 
-        ResponseEntity<?> response = controller.delete(mockStoreManagerId, mockStoreId, "Bearer token");
+        ResponseEntity<?> response = controller.delete(mockStoreManagerId, mockStoreManagerId.toString());
 
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
         assertEquals("Store manager not found", ((Map<?, ?>) response.getBody()).get("error"));
     }
 
     // Mocking JwtTokenProvider as a static class
-    private void mockStatic(Class<?> clazz) {
+    private void mockStatic() {
         try {
-            Mockito.mockStatic(clazz).when(() -> JwtTokenProvider.extractIdFromToken(anyString())).thenReturn(mockAdminId);
+            Mockito.mockStatic((Class<?>) JwtTokenProvider.class).when(() -> JwtTokenProvider.extractIdFromToken(anyString())).thenReturn(mockAdminId);
         } catch (Exception ignored) {}
     }
 }

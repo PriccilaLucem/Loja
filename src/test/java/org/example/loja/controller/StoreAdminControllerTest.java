@@ -73,7 +73,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.getStoreAdminById(adminId);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(admin, response.getBody());
         verify(storeAdminServices, times(1)).getStoreAdminById(adminId);
     }
@@ -86,7 +86,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.getStoreAdminById(adminId);
 
         assertNotNull(response);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
         assertEquals(Map.of("error", "Store Admin not found."), response.getBody());
         verify(storeAdminServices, times(1)).getStoreAdminById(adminId);
     }
@@ -105,7 +105,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.saveStoreAdmin(admin, 37.7749, -122.4194);
 
         assertNotNull(response);
-        assertEquals(201, response.getStatusCodeValue());
+        assertEquals(201, response.getStatusCode().value());
         assertEquals(Map.of("message", "Store Admin created.", "id", generatedId), response.getBody());
         verify(storeAdminServices, times(1)).saveStoreAdmin(admin, 37.7749, -122.4194);
     }
@@ -122,7 +122,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.saveStoreAdmin(admin, 37.7749, -122.4194);
 
         assertNotNull(response);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
         assertEquals(Map.of("error", "Email is invalid"), response.getBody());
         verify(storeAdminServices, times(1)).saveStoreAdmin(admin, 37.7749, -122.4194);
     }
@@ -135,7 +135,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.deleteStoreAdmin(adminId);
 
         assertNotNull(response);
-        assertEquals(204, response.getStatusCodeValue()); // No Content
+        assertEquals(204, response.getStatusCode().value()); // No Content
         assertNull(response.getBody());
         verify(storeAdminServices, times(1)).deleteStoreAdmin(adminId);
     }
@@ -148,7 +148,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.deleteStoreAdmin(adminId);
 
         assertNotNull(response);
-        assertEquals(400, response.getStatusCodeValue()); // Bad Request
+        assertEquals(400, response.getStatusCode().value()); // Bad Request
         assertEquals(Map.of("error", "Admin Already Deactivated"), response.getBody());
         verify(storeAdminServices, times(1)).deleteStoreAdmin(adminId);
     }
@@ -161,7 +161,7 @@ class StoreAdminControllerTest {
         ResponseEntity<?> response = storeAdminController.deleteStoreAdmin(adminId);
 
         assertNotNull(response);
-        assertEquals(404, response.getStatusCodeValue()); // Not Found
+        assertEquals(404, response.getStatusCode().value()); // Not Found
         assertEquals(Map.of("error", "Store Admin not found."), response.getBody());
         verify(storeAdminServices, times(1)).deleteStoreAdmin(adminId);
     }

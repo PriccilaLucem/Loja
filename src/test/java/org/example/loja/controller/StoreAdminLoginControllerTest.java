@@ -67,7 +67,7 @@ class    StoreAdminLoginControllerTest {
             mockedAuth.when(() -> Authorization.isAuthorized(anyString(), anyString()))
                     .thenReturn(true);
 
-            when(jwtTokenProvider.generateUserAdminToken(admin))
+            when(jwtTokenProvider.generateStoreAdminToken(admin))
                     .thenReturn("mock_jwt_token");
 
             ResponseEntity<?> response = storeAdminLoginController.login(login);
@@ -76,7 +76,7 @@ class    StoreAdminLoginControllerTest {
             assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
             assertEquals(Map.of("token", "mock_jwt_token"), response.getBody());
 
-            verify(jwtTokenProvider, times(1)).generateUserAdminToken(admin);
+            verify(jwtTokenProvider, times(1)).generateStoreAdminToken(admin);
         }
 
         verify(storeAdminServices, times(1)).getStoreAdminByEmail(login.getEmail());
@@ -126,7 +126,7 @@ class    StoreAdminLoginControllerTest {
 
         // Assert
         assertNotNull(response);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
         assertEquals(Map.of("error", "Store Admin not found"), response.getBody());
 
         verify(storeAdminServices, times(1)).getStoreAdminByEmail(login.getEmail());
@@ -145,7 +145,7 @@ class    StoreAdminLoginControllerTest {
         ResponseEntity<?> response = storeAdminLoginController.login(login);
 
         assertNotNull(response);
-        assertEquals(400, response.getStatusCodeValue());
+        assertEquals(400, response.getStatusCode().value());
         assertEquals(Map.of("error", "Unexpected error"), response.getBody());
 
         verify(storeAdminServices, times(1)).getStoreAdminByEmail(login.getEmail());
