@@ -2,6 +2,7 @@ package org.example.loja.dto;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -16,7 +17,7 @@ public class ProductDTO {
 
     private String description;
 
-    private String image;
+    private List<String> images;
 
     private String brand;
 

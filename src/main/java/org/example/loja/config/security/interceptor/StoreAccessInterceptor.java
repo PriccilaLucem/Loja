@@ -20,7 +20,7 @@ public class StoreAccessInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object  handler) throws Exception {
         String token = request.getHeader("Authorization");
-        String storeId = request.getRequestURI().split("/")[4]; // /api/v1/store/{id}/...
+        String storeId = request.getRequestURI().split("/")[4];
 
         if (token == null || storeId == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

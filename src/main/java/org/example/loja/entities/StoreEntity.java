@@ -61,4 +61,7 @@ public class StoreEntity {
     public void addProduct(ProductEntity product) {
         this.products.add(product);
     }
+    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
+    private ImageEntity image;
+
 }

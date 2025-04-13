@@ -1,8 +1,10 @@
 package org.example.loja.services;
 
 import org.example.loja.dto.ProductDTO;
+import org.example.loja.entities.ImageEntity;
 import org.example.loja.entities.ProductEntity;
 import org.example.loja.repository.CategoryRepository;
+import org.example.loja.repository.ImageRepository;
 import org.example.loja.repository.ProductsRepository;
 import org.example.loja.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductsServices {
@@ -21,6 +25,9 @@ public class ProductsServices {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     public List<ProductEntity> getAllProducts(){
         return productsRepository.findAll();
@@ -56,8 +63,15 @@ public class ProductsServices {
         product.setPrice(productDTO.getPrice());
         product.setQuantity(productDTO.getQuantity());
         product.setBrand(productDTO.getBrand());
-        product.setImage(productDTO.getImage());
-        product.setStore(storeRepository.findById(productDTO.getStoreId()).orElseThrow(() -> new IllegalArgumentException("Invalid Store")));
+        Set<ImageEntity> imageEntities = productDTO.getImages().stream()
+                .map(url -> imageRepository.findByUrl(url)
+                        .orElseGet(() -> {
+                            ImageEntity newImage = new ImageEntity();
+                            newImage.setUrl(url);
+                            return imageRepository.save(newImage);
+                        })
+                ).collect(Collectors.toSet());
+            product.setStore(storeRepository.findById(productDTO.getStoreId()).orElseThrow(() -> new IllegalArgumentException("Invalid Store")));
         product.setCategories(new HashSet<>(categoryRepository.findAllById(productDTO.getCategories())));
 
         validateProduct(product);
@@ -85,8 +99,11 @@ public class ProductsServices {
         if(product.getStore().getId() == null){
             throw new IllegalArgumentException("Invalid Product Store");
         }
-        if(product.getImage().isBlank() || !product.getImage().startsWith("data:image/")){
-            throw new IllegalArgumentException("Invalid Product Image");
+        for (ImageEntity img : product.getImage()) {
+            if (img.getUrl() == null || !img.getUrl().startsWith("data:image/")) {
+                throw new IllegalArgumentException("Invalid Product Image format");
+            }
         }
     }
+
 }

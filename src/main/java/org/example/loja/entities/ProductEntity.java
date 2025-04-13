@@ -31,15 +31,15 @@ public class ProductEntity {
 
     private String description;
 
-
-    private String image;
+    @OneToMany
+    private Set<ImageEntity> image = new HashSet<>();
 
     private String brand;
 
     private Integer quantity;
 
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id")
     private StoreEntity store;
 
 

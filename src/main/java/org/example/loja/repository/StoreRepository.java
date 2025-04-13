@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Repository
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     @Modifying
@@ -25,4 +27,5 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
     @Transactional
     int saveStoreAndReturnAffectedRows(@NonNull @Param("storeEntity") StoreEntity storeEntity);
 
+    Optional<Object> findOneByName(String name);
 }
